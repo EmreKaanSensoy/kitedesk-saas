@@ -1,0 +1,171 @@
+<% content_for :title, "Temsilci Masası — KiteDesk Enterprise SLA" %>
+
+<!-- KPI Metric Cards -->
+<div class="kpi-grid">
+  <div class="kpi-card blue">
+    <span class="kpi-title">Toplam Bilet</span>
+    <span class="kpi-value"><%= @total_count %></span>
+    <span class="kpi-subtitle">Sistemdeki tüm kayıtlı talepler</span>
+  </div>
+
+  <div class="kpi-card amber">
+    <span class="kpi-title">İşlemdeki Talepler</span>
+    <span class="kpi-value"><%= @open_count %></span>
+    <span class="kpi-subtitle">New, Open ve Pending biletler</span>
+  </div>
+
+  <div class="kpi-card red">
+    <span class="kpi-title">Kritik / Acil</span>
+    <span class="kpi-value"><%= @urgent_count %></span>
+    <span class="kpi-subtitle">Urgent öncelikli aktif biletler</span>
+  </div>
+
+  <div class="kpi-card red">
+    <span class="kpi-title">SLA İhlalleri</span>
+    <span class="kpi-value" style="color: #f87171;"><%= @breached_count %></span>
+    <span class="kpi-subtitle">İlk yanıt veya çözüm süresi aşılmış</span>
+  </div>
+
+  <div class="kpi-card special">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span class="kpi-title" style="color: #f472b6;">100 PUAN ÖZELLİĞİ</span>
+      <span class="kpi-badge">Kullanılabilir Pas</span>
+    </div>
+    <span class="kpi-value" style="color: #f472b6;"><%= @gratitude_prevented_count %></span>
+    <span class="kpi-subtitle">Engellenen sahte "Teşekkür" yeniden açılmaları</span>
+  </div>
+</div>
+
+<!-- Toolbar & Filters -->
+<div class="toolbar-wrap">
+  <div class="filter-pills">
+    <%= link_to "Tümü (#{Ticket.count})", tickets_path, class: "filter-pill #{'active' if params[:filter].blank?}" %>
+    <%= link_to "Atanmamış (#{Ticket.unassigned.count})", tickets_path(filter: "unassigned"), class: "filter-pill #{'active' if params[:filter] == 'unassigned'}" %>
+    <%= link_to "Acil (#{Ticket.where(priority: 'urgent').count})", tickets_path(filter: "urgent"), class: "filter-pill #{'active' if params[:filter] == 'urgent'}" %>
+    <%= link_to "🚨 SLA İhlali (#{Ticket.where(sla_breached: true).count})", tickets_path(filter: "breached"), class: "filter-pill #{'active' if params[:filter] == 'breached'}" %>
+    <%= link_to "Çözülmüş (#{Ticket.where(status: 'solved').count})", tickets_path(filter: "solved"), class: "filter-pill #{'active' if params[:filter] == 'solved'}" %>
+    <%= link_to "Kapatılmış (#{Ticket.where(status: 'closed').count})", tickets_path(filter: "closed"), class: "filter-pill #{'active' if params[:filter] == 'closed'}" %>
+    <%= link_to "🛡️ Teşekkür Koruması (#{Ticket.where(gratitude_loop_prevented: true).count})", tickets_path(filter: "gratitude"), class: "filter-pill #{'active' if params[:filter] == 'gratitude'}" %>
+  </div>
+
+  <div style="display: flex; gap: 10px; align-items: center;">
+    <%= form_with url: tickets_path, method: :get, local: true, class: "search-box" do |f| %>
+      <span>🔍</span>
+      <%= f.text_field :q, value: params[:q], placeholder: "Bilet No, Başlık, Müşteri...", class: "search-input" %>
+      <% if params[:q].present? %>
+        <%= link_to "✕", tickets_path, style: "color: var(--text-muted); font-size: 11px;" %>
+      <% end %>
+    <% end %>
+
+    <%= link_to new_ticket_path, class: "btn btn-primary", id: "btn-new-ticket" do %>
+      <span>＋</span> Yeni Bilet
+    <% end %>
+  </div>
+</div>
+
+<!-- Tickets Table -->
+<div class="table-card">
+  <% if @tickets.any? %>
+    <table class="ticket-table">
+      <thead>
+        <tr>
+          <th>Bilet No</th>
+          <th>Konu / Talep Eden</th>
+          <th>Kategori</th>
+          <th>Öncelik</th>
+          <th>Durum</th>
+          <th>SLA Durumu</th>
+          <th>Temsilci</th>
+          <th style="text-align: right;">İşlem</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @tickets.each do |ticket| %>
+          <tr id="ticket-row-<%= ticket.id %>">
+            <td style="font-family: var(--font-mono); font-weight: 700; color: #94a3b8;">
+              <%= ticket.ticket_number %>
+            </td>
+
+            <td style="max-width: 320px;">
+              <%= link_to ticket.title, ticket_path(ticket), class: "ticket-title-link" %>
+              <div class="ticket-requester">
+                <span><%= ticket.requester_name %></span> &bull; 
+                <span><%= ticket.requester_email %></span>
+                <% if ticket.gratitude_loop_prevented? %>
+                  <span class="gratitude-badge" style="margin-left: 6px;" title="Müşterinin nezaket teşekkürü biletin sahte re-open olmasını engelledi">
+                    🛡️ Teşekkür Filtrelendi
+                  </span>
+                <% end %>
+              </div>
+            </td>
+
+            <td>
+              <span style="font-size: 12px; color: var(--text-secondary); background: var(--bg-subtle); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <%= ticket.category %>
+              </span>
+            </td>
+
+            <td>
+              <span class="badge-priority badge-<%= ticket.priority %>">
+                <%= ticket.priority %>
+              </span>
+            </td>
+
+            <td>
+              <span class="badge badge-<%= ticket.status %>">
+                <%= ticket.status == "new_ticket" ? "NEW" : ticket.status.upcase %>
+              </span>
+            </td>
+
+            <td>
+              <% badge = ticket.sla_badge_status %>
+              <% if badge == :breached %>
+                <span class="sla-pill breached" title="<%= ticket.sla_breach_reason %>">
+                  🚨 İHLAL EDİLDİ
+                </span>
+              <% elsif badge == :warning %>
+                <span class="sla-pill warning">
+                  ⚠️ < 30 Dakika
+                </span>
+              <% elsif ticket.status == "solved" || ticket.status == "closed" %>
+                <span class="sla-pill healthy">
+                  ✅ Tamamlandı
+                </span>
+              <% else %>
+                <span class="sla-pill healthy">
+                  🟢 SLA Aktif
+                </span>
+              <% end %>
+            </td>
+
+            <td>
+              <% if ticket.agent %>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <div class="avatar-circle" style="background-color: <%= ticket.agent.avatar_color %>; width: 22px; height: 22px; font-size: 10px;">
+                    <%= ticket.agent.initials %>
+                  </div>
+                  <span style="font-size: 12px; color: #f1f5f9;"><%= ticket.agent.name %></span>
+                </div>
+              <% else %>
+                <span style="font-size: 12px; color: #f59e0b; font-style: italic;">Atanmamış</span>
+              <% end %>
+            </td>
+
+            <td style="text-align: right;">
+              <%= link_to "Yönet →", ticket_path(ticket), class: "btn btn-secondary btn-sm" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div style="padding: 60px 20px; text-align: center; color: var(--text-muted);">
+      <p style="font-size: 32px; margin-bottom: 12px;">📭</p>
+      <h3 style="color: #ffffff; font-size: 18px; margin-bottom: 6px;">Bu filtrede bilet bulunamadı</h3>
+      <p style="font-size: 13px;">Farklı bir filtre seçebilir veya yeni bir destek bileti açabilirsiniz.</p>
+      <div style="margin-top: 16px;">
+        <%= link_to "Tüm Biletleri Göster", tickets_path, class: "btn btn-secondary btn-sm" %>
+      </div>
+    </div>
+  <% end %>
+</div>

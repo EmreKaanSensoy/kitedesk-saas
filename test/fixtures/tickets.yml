@@ -1,0 +1,30 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+urgent_ticket:
+  ticket_number: KD-990001
+  title: Production Database Latency Spike
+  description: Customer checkout API is reporting 504 timeouts.
+  priority: urgent
+  status: open
+  category: Technical
+  requester_name: Acme VP Engineering
+  requester_email: vp@acmecorp.com
+  agent: sarah
+  first_response_due_at: <%= 1.hour.from_now %>
+  resolution_due_at: <%= 4.hours.from_now %>
+  sla_breached: false
+  gratitude_loop_prevented: false
+
+medium_ticket:
+  ticket_number: KD-990002
+  title: Billing invoice address update
+  description: Please update our VAT ID and company headquarters address.
+  priority: medium
+  status: new_ticket
+  category: Billing
+  requester_name: David Warner
+  requester_email: david@cloudlogistics.org
+  first_response_due_at: <%= 12.hours.from_now %>
+  resolution_due_at: <%= 48.hours.from_now %>
+  sla_breached: false
+  gratitude_loop_prevented: false

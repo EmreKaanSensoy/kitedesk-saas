@@ -1,0 +1,73 @@
+<% content_for :title, "Yeni Destek Bileti Oluştur — KiteDesk" %>
+
+<div style="max-width: 680px; margin: 0 auto;">
+  <div style="margin-bottom: 20px;">
+    <%= link_to "&larr; Bilet Listesine Dön".html_safe, tickets_path, style: "font-size: 13px; color: var(--text-secondary);" %>
+  </div>
+
+  <div class="table-card" style="padding: 32px;">
+    <div style="margin-bottom: 24px;">
+      <h1 style="font-size: 22px; font-weight: 700; color: #ffffff;">Yeni Kurumsal Destek Bileti</h1>
+      <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+        Talep oluşturulduğunda öncelik seviyesine göre gerçek zamanlı SLA geri sayımı otomatik başlayacaktır.
+      </p>
+    </div>
+
+    <%= form_with model: @ticket, local: true do |f| %>
+      <% if @ticket.errors.any? %>
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: var(--radius-md); padding: 14px; margin-bottom: 20px; color: #fca5a5; font-size: 13px;">
+          <strong>Lütfen aşağıdaki hataları düzeltin:</strong>
+          <ul style="margin-left: 20px; margin-top: 6px;">
+            <% @ticket.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :title, "Bilet Başlığı / Konu *", class: "form-label" %>
+        <%= f.text_field :title, placeholder: "Ör: API 504 Gateway Timeout Hatası", class: "form-input", required: true, id: "ticket-title-input" %>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group">
+          <%= f.label :priority, "Öncelik Seviyesi (SLA)", class: "form-label" %>
+          <%= f.select :priority, options_for_select([
+            ["Urgent — 1s Yanıt / 4s Çözüm", "urgent"],
+            ["High — 4s Yanıt / 12s Çözüm", "high"],
+            ["Medium — 12s Yanıt / 48s Çözüm", "medium"],
+            ["Low — 24s Yanıt / 96s Çözüm", "low"]
+          ], "medium"), {}, class: "form-select", id: "ticket-priority-select" %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :category, "Kategori", class: "form-label" %>
+          <%= f.select :category, options_for_select(Ticket::CATEGORIES, "Technical"), {}, class: "form-select", id: "ticket-category-select" %>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group">
+          <%= f.label :requester_name, "Talep Eden İsim *", class: "form-label" %>
+          <%= f.text_field :requester_name, placeholder: "Ör: Marc Andreessen", class: "form-input", required: true, id: "ticket-requester-name" %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :requester_email, "Talep Eden E-posta *", class: "form-label" %>
+          <%= f.email_field :requester_email, placeholder: "Ör: marc@acmecorp.com", class: "form-input", required: true, id: "ticket-requester-email" %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :description, "Sorun Açıklaması *", class: "form-label" %>
+        <%= f.text_area :description, rows: 5, placeholder: "Sorunun detayları, etkilenen sistemler ve hata kodları...", class: "form-input", required: true, id: "ticket-desc-input" %>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+        <%= link_to "İptal", tickets_path, class: "btn btn-secondary" %>
+        <%= f.submit "Bileti Oluştur ve SLA Başlat", class: "btn btn-primary", id: "btn-submit-ticket" %>
+      </div>
+    <% end %>
+  </div>
+</div>

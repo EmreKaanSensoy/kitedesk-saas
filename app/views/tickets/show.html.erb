@@ -1,0 +1,352 @@
+<% content_for :title, "#{@ticket.ticket_number} — #{@ticket.title}" %>
+
+<div style="margin-bottom: 16px;">
+  <%= link_to "&larr; Bilet Listesine Dön".html_safe, tickets_path, style: "font-size: 13px; color: var(--text-secondary);" %>
+</div>
+
+<div class="ticket-detail-grid">
+  <!-- Left Main Column -->
+  <div>
+    <!-- Ticket Header Card -->
+    <div class="ticket-header-card">
+      <div class="ticket-header-top">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-family: var(--font-mono); font-weight: 800; font-size: 16px; color: var(--brand-primary);">
+            <%= @ticket.ticket_number %>
+          </span>
+          <span class="badge badge-<%= @ticket.status %>">
+            <%= @ticket.status == "new_ticket" ? "NEW" : @ticket.status.upcase %>
+          </span>
+          <span class="badge-priority badge-<%= @ticket.priority %>">
+            <%= @ticket.priority %>
+          </span>
+          <span style="font-size: 12px; color: var(--text-secondary); background: var(--bg-subtle); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+            <%= @ticket.category %>
+          </span>
+        </div>
+
+        <div style="font-size: 12px; color: var(--text-muted);">
+          Açılış: <%= @ticket.created_at.strftime("%d.%m.%Y %H:%M") %>
+        </div>
+      </div>
+
+      <h1 class="ticket-h1"><%= @ticket.title %></h1>
+
+      <div style="margin-top: 10px; font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div><strong>Talep Eden:</strong> <%= @ticket.requester_name %> (<%= @ticket.requester_email %>)</div>
+        <div><strong>Atanan:</strong> <%= @ticket.agent ? @ticket.agent.name : "Atanmamış" %></div>
+      </div>
+
+      <div class="ticket-desc-box">
+        <%= @ticket.description %>
+      </div>
+    </div>
+
+    <!-- Live SLA Orchestration Banner -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 24px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">⏱️</span>
+          <strong style="font-size: 14px; color: #ffffff;">Gerçek Zamanlı SLA Takip Motoru</strong>
+        </div>
+
+        <% badge = @ticket.sla_badge_status %>
+        <% if badge == :breached %>
+          <span class="sla-pill breached">🚨 SLA İHLAL EDİLDİ</span>
+        <% elsif badge == :warning %>
+          <span class="sla-pill warning">⚠️ SLA UYARISI (< 30 Dk)</span>
+        <% elsif @ticket.status == "solved" || @ticket.status == "closed" %>
+          <span class="sla-pill healthy">✅ SLA TAMAMLANDI</span>
+        <% else %>
+          <span class="sla-pill healthy">🟢 HEDEFLER GÜVENDE</span>
+        <% end %>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+        <!-- Target 1: First Response -->
+        <div style="background: var(--bg-subtle); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+            İlk Yanıt Hedefi (First Response SLA)
+          </div>
+          <div style="font-size: 13px; font-weight: 600; color: #ffffff; margin-top: 4px;">
+            Hedef: <%= @ticket.first_response_due_at ? @ticket.first_response_due_at.strftime("%d.%m.%Y %H:%M") : "-" %>
+          </div>
+          <div style="font-size: 12px; margin-top: 4px;">
+            <% if @ticket.first_responded_at.present? %>
+              <span style="color: #34d399;">✅ Yanıtlandı: <%= @ticket.first_responded_at.strftime("%d.%m.%Y %H:%M") %></span>
+            <% elsif @ticket.first_response_due_at && Time.current > @ticket.first_response_due_at %>
+              <span style="color: #f87171; font-weight: 700;">🚨 İHLAL EDİLDİ (İlk yanıt gecikti)</span>
+            <% else %>
+              <span style="color: #38bdf8;">Kalan Süre: <%= distance_of_time_in_words(Time.current, @ticket.first_response_due_at) %></span>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Target 2: Resolution -->
+        <div style="background: var(--bg-subtle); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+            Çözüm Hedefi (Resolution SLA)
+          </div>
+          <div style="font-size: 13px; font-weight: 600; color: #ffffff; margin-top: 4px;">
+            Hedef: <%= @ticket.resolution_due_at ? @ticket.resolution_due_at.strftime("%d.%m.%Y %H:%M") : "-" %>
+          </div>
+          <div style="font-size: 12px; margin-top: 4px;">
+            <% if @ticket.resolved_at.present? %>
+              <span style="color: #34d399;">✅ Çözüldü: <%= @ticket.resolved_at.strftime("%d.%m.%Y %H:%M") %></span>
+            <% elsif @ticket.resolution_due_at && Time.current > @ticket.resolution_due_at %>
+              <span style="color: #f87171; font-weight: 700;">🚨 İHLAL EDİLDİ (Çözüm gecikti)</span>
+            <% else %>
+              <span style="color: #38bdf8;">Kalan Süre: <%= distance_of_time_in_words(Time.current, @ticket.resolution_due_at) %></span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <% if @ticket.sla_breached? %>
+        <div style="margin-top: 14px; padding: 10px 14px; background: rgba(239, 68, 68, 0.15); border-left: 3px solid #ef4444; border-radius: 4px; font-size: 12px; color: #fca5a5;">
+          <strong>İhlal Nedeni:</strong> <%= @ticket.sla_breach_reason %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 100-Point Gratitude Guard Alert Card (Shows if active) -->
+    <% if @ticket.gratitude_loop_prevented? %>
+      <div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(139, 92, 246, 0.15)); border: 1px solid rgba(236, 72, 153, 0.4); border-radius: var(--radius-lg); padding: 18px 20px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.15);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">🛡️</span>
+            <div>
+              <strong style="color: #f472b6; font-size: 14px; display: block;">100 PUANLIK ÖZELLİK: Akıllı Teşekkür & OOO Kalkanı Devrede</strong>
+              <p style="color: #e2e8f0; font-size: 12px; margin-top: 2px;">
+                Müşteri çözülmüş bu bilete nezaket teşekkürü gönderdi. Sistem bileti tekrar <strong>OPEN</strong> durumuna düşürmedi ve SLA süresini sıfırlamadı!
+              </p>
+            </div>
+          </div>
+          <span class="badge" style="background: #ec4899; color: #ffffff;">Aktif Çözüm</span>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Conversation Messages Thread -->
+    <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 14px;">
+      İletişim Geçmişi (<%= @messages.count %> Mesaj)
+    </h3>
+
+    <div class="thread-wrap">
+      <% if @messages.any? %>
+        <% @messages.each do |msg| %>
+          <div class="message-card <%= 'internal-note' if msg.is_internal_note? %> <%= 'gratitude-intercept' if msg.is_gratitude? %>">
+            <div class="message-header">
+              <div class="sender-info">
+                <% if msg.sender_type == "agent" %>
+                  <div class="avatar-circle" style="background-color: var(--brand-primary);">
+                    <%= msg.sender_name[0..1].upcase %>
+                  </div>
+                  <div>
+                    <span class="sender-name" style="color: #818cf8;"><%= msg.sender_name %></span>
+                    <span class="sender-role-tag">&bull; Destek Temsilcisi</span>
+                    <% if msg.is_internal_note? %>
+                      <span class="badge" style="background: #78350f; color: #fde68a; margin-left: 6px;">🔒 Dahili Not (Gizli)</span>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class="avatar-circle" style="background-color: #059669;">
+                    <%= msg.sender_name[0..1].upcase %>
+                  </div>
+                  <div>
+                    <span class="sender-name" style="color: #34d399;"><%= msg.sender_name %></span>
+                    <span class="sender-role-tag">&bull; Müşteri</span>
+                    <% if msg.is_gratitude? %>
+                      <span class="gratitude-badge" style="margin-left: 6px;">
+                        🛡️ Teşekkür Tespit Edildi (Bilet Açılmadı)
+                      </span>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+
+              <div class="message-time">
+                <%= msg.created_at.strftime("%d.%m.%Y %H:%M") %>
+              </div>
+            </div>
+
+            <div class="message-body">
+              <%= msg.body %>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div style="background: var(--bg-card); padding: 24px; border-radius: var(--radius-md); text-align: center; color: var(--text-muted); font-size: 13px;">
+          Henüz mesaj kaydı bulunmuyor. İlk temsilci yanıtını aşağıdan gönderebilirsiniz.
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Agent Reply Box -->
+    <div class="reply-card">
+      <div class="reply-tabs">
+        <span style="font-size: 14px; font-weight: 700; color: #ffffff;">Temsilci Yanıtı Gönder:</span>
+      </div>
+
+      <%= form_with url: add_message_ticket_path(@ticket), method: :post, local: true do |f| %>
+        <%= f.text_area :body, rows: 4, placeholder: "Müşteriye yanıtınızı veya kurum içi dahili notunuzu yazın...", class: "reply-textarea" %>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); cursor: pointer;">
+            <%= f.check_box :is_internal_note, { id: "check-internal-note" }, "1", "0" %>
+            <span>🔒 Dahili Not olarak kaydet (Müşteri görmez, sadece ekip içi)</span>
+          </label>
+
+          <%= f.submit "Mesajı Gönder", class: "btn btn-primary", id: "btn-send-agent-reply" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Customer Interactive Reply Box (For Live Classroom Demo of 100-Point Feature) -->
+    <div style="background: var(--bg-subtle); border: 1px dashed var(--border-color); border-radius: var(--radius-lg); padding: 18px 20px; margin-top: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-size: 13px; font-weight: 700; color: #38bdf8;">
+          👤 Canlı Test: Müşteri Gözünden Cevap Yaz (<%= @ticket.requester_name %>)
+        </span>
+        <span style="font-size: 11px; color: var(--text-muted);">
+          100 Puan Özelliğini Test Edin
+        </span>
+      </div>
+
+      <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
+        Bilet <strong>SOLVED</strong> iken buraya <em>"Harikasınız sorun çözüldü teşekkürler!"</em> yazın ve biletin tekrar açılmadığını görün!
+      </p>
+
+      <%= form_with url: customer_reply_ticket_path(@ticket), method: :post, local: true do |f| %>
+        <div style="display: flex; gap: 8px;">
+          <%= f.text_field :body, placeholder: "Ör: Sorun çözüldü teşekkürler / Hala çalışmıyor...", class: "form-input", style: "flex: 1;", id: "input-customer-reply" %>
+          <%= f.submit "Müşteri Olarak Gönder", class: "btn btn-secondary", id: "btn-send-customer-reply" %>
+        </div>
+      <% end %>
+
+      <% if @ticket.status == "solved" %>
+        <div style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 11px; color: var(--text-muted);">Müşteri biletini gerçekten yeniden açmak isterse:</span>
+          <%= button_to "Hala Yardıma İhtiyacım Var (Bileti Aç)", reopen_issue_ticket_path(@ticket), method: :post, class: "btn btn-warning btn-sm", id: "btn-reopen-ticket" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Right Sidebar Column -->
+  <div>
+    <!-- 1. State Machine Controller -->
+    <div class="sidebar-panel">
+      <div class="panel-title">
+        <span>Durum Akışı (State Machine)</span>
+      </div>
+
+      <div style="margin-bottom: 12px; font-size: 13px;">
+        Geçerli Durum:
+        <span class="badge badge-<%= @ticket.status %>" style="margin-left: 6px;">
+          <%= @ticket.status == "new_ticket" ? "NEW" : @ticket.status.upcase %>
+        </span>
+      </div>
+
+      <div class="state-actions-grid">
+        <% if @ticket.can_transition_to?("open") %>
+          <%= button_to "OPEN Yap", update_status_ticket_path(@ticket, new_status: "open"), method: :patch, class: "btn btn-warning btn-sm btn-block", id: "btn-state-open" %>
+        <% end %>
+
+        <% if @ticket.can_transition_to?("pending") %>
+          <%= button_to "PENDING Yap", update_status_ticket_path(@ticket, new_status: "pending"), method: :patch, class: "btn btn-secondary btn-sm btn-block", id: "btn-state-pending" %>
+        <% end %>
+
+        <% if @ticket.can_transition_to?("solved") %>
+          <%= button_to "SOLVED Yap", update_status_ticket_path(@ticket, new_status: "solved"), method: :patch, class: "btn btn-success btn-sm btn-block", id: "btn-state-solved" %>
+        <% end %>
+
+        <% if @ticket.can_transition_to?("closed") %>
+          <%= button_to "CLOSED Yap", update_status_ticket_path(@ticket, new_status: "closed"), method: :patch, class: "btn btn-secondary btn-sm btn-block", id: "btn-state-closed", data: { turbo_confirm: "Kapalı biletler arşivlenir ve kilitlenir. Devam edilsin mi?" } %>
+        <% end %>
+      </div>
+
+      <% if @ticket.status == "closed" %>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px; font-style: italic;">
+          🔒 Bilet kapatılmıştır. Zendesk kuralı uyarınca kapalı bilet doğrudan açılamaz.
+        </p>
+      <% end %>
+    </div>
+
+    <!-- 2. Priority & SLA Recalculation -->
+    <div class="sidebar-panel">
+      <div class="panel-title">
+        <span>Öncelik & SLA Hedefleri</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+        <% Ticket::PRIORITIES.each do |p| %>
+          <%= button_to p.capitalize, update_priority_ticket_path(@ticket, priority: p), method: :patch, class: "btn btn-sm btn-block #{'btn-primary' if @ticket.priority == p} #{'btn-secondary' unless @ticket.priority == p}", id: "btn-priority-#{p}" %>
+        <% end %>
+      </div>
+      <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">
+        Öncelik değiştiğinde ilk yanıt ve çözüm SLA sayaçları anında yeniden hesaplanır.
+      </p>
+    </div>
+
+    <!-- 3. Assign Agent -->
+    <div class="sidebar-panel">
+      <div class="panel-title">
+        <span>Temsilci Atama</span>
+      </div>
+
+      <%= form_with url: assign_ticket_path(@ticket), method: :patch, local: true do |f| %>
+        <div style="display: flex; gap: 6px;">
+          <%= f.select :agent_id, options_from_collection_for_select(@agents, :id, :name, @ticket.agent_id), {}, class: "form-select" %>
+          <%= f.submit "Ata", class: "btn btn-secondary btn-sm", id: "btn-assign-agent" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 4. LIVE PRESENTATION SIMULATOR CONSOLE (FOR 5-MINUTE LIVE CLASSROOM DEMO) -->
+    <div class="sidebar-panel" style="border-color: #6366f1; background: rgba(99, 102, 241, 0.05);">
+      <div class="panel-title" style="color: #a5b4fc;">
+        <span>⚡ Canlı Sunum Simülatörü</span>
+        <span style="font-size: 10px; background: #4f46e5; color: #ffffff; padding: 2px 6px; border-radius: 4px;">5 Dk. Kolaylığı</span>
+      </div>
+
+      <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 10px;">
+        Sınıfta hocaya zaman kuralını kanıtlamak için gerçekte 48 saat beklemek yerine tek tıkla simüle edin:
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <%= button_to "⏱️ +2 Saat: İlk Yanıt SLA İhlali Tetikle", simulate_time_ticket_path(@ticket, sim_action: "expire_first_response"), method: :post, class: "btn btn-danger btn-sm btn-block", id: "btn-sim-sla-breach" %>
+
+        <%= button_to "⏱️ +50 Saat: Çözüm Zamanını Geriye Çek", simulate_time_ticket_path(@ticket, sim_action: "expire_48h_resolution"), method: :post, class: "btn btn-warning btn-sm btn-block", id: "btn-sim-48h" %>
+
+        <%= button_to "✅ 48 Saatlik Otomatik Kapatmayı Çalıştır", simulate_time_ticket_path(@ticket, sim_action: "run_auto_close_single"), method: :post, class: "btn btn-success btn-sm btn-block", id: "btn-sim-auto-close" %>
+
+        <%= button_to "🔄 SLA Sayaçlarını Başa Sar", simulate_time_ticket_path(@ticket, sim_action: "reset_slas"), method: :post, class: "btn btn-secondary btn-sm btn-block", id: "btn-sim-reset" %>
+      </div>
+    </div>
+
+    <!-- 5. Audit Log Trail -->
+    <div class="sidebar-panel">
+      <div class="panel-title">
+        <span>Aktivite & Denetim Günlüğü (<%= @events.count %>)</span>
+      </div>
+
+      <div class="timeline">
+        <% @events.each do |event| %>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="<%= 'background: #ef4444;' if event.event_type == 'sla_breached' %> <%= 'background: #ec4899;' if event.event_type == 'gratitude_intercepted' %> <%= 'background: #10b981;' if event.event_type == 'auto_closed' %>"></div>
+            <div class="timeline-content">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="timeline-actor"><%= event.actor_name %></span>
+                <span class="timeline-time"><%= time_ago_in_words(event.created_at) %> önce</span>
+              </div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+                <%= event.details %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

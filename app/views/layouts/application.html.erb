@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <title><%= content_for(:title) || "KiteDesk Enterprise — Akıllı Destek ve SLA Yönetim Platformu" %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Fortune 500 ölçeğinde kurumsal müşteri destek biletleme ve gerçek zamanlı SLA orkestrasyon sistemi.">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <!-- Top Global Navigation Bar -->
+    <header class="header">
+      <div class="container nav-wrap">
+        <div class="brand-group">
+          <%= link_to root_path, class: "brand-logo", id: "nav-brand-logo" do %>
+            <div class="logo-icon">
+              <!-- Custom Kite / Shield SVG Logo -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 12l10 10 10-10L12 2z"></path>
+                <path d="M12 2v20"></path>
+                <path d="M2 12h20"></path>
+              </svg>
+            </div>
+            <span>KiteDesk</span>
+          <% end %>
+          <span class="badge-tagline">Enterprise SLA Core</span>
+        </div>
+
+        <nav class="nav-links">
+          <%= link_to tickets_path, class: "nav-btn #{'active' if current_page?(tickets_path) || current_page?(root_path)}", id: "nav-agent-desk" do %>
+            <span>📊</span> Temsilci Masası
+          <% end %>
+
+          <%= link_to customer_portal_tickets_path, class: "nav-btn #{'active' if current_page?(customer_portal_tickets_path)}", id: "nav-customer-portal" do %>
+            <span>👤</span> Müşteri Portalı
+          <% end %>
+
+          <%= link_to presentation_defense_tickets_path, class: "nav-btn highlight", id: "nav-presentation-defense" do %>
+            <span>🎯</span> 5 Dk. Canlı Sunum & Kod Yeri
+          <% end %>
+
+          <%= button_to run_auto_close_tickets_path, method: :post, class: "nav-btn", id: "nav-auto-close-btn", title: "48 saati aşan solved biletleri otomatik kapatır" do %>
+            <span>⏱️</span> 48s Kapatıcı
+          <% end %>
+
+          <%= button_to reset_seed_data_tickets_path, method: :post, class: "nav-btn", id: "nav-reset-data-btn", data: { turbo_confirm: "Demo verilerini başlangıç durumuna sıfırlamak istiyor musunuz?" }, title: "Sunum öncesi verileri sıfırla" do %>
+            <span>🔄</span> Sıfırla
+          <% end %>
+        </nav>
+
+        <!-- Active Agent Profile & Switcher -->
+        <% if @current_agent %>
+          <div class="agent-selector">
+            <div class="avatar-circle" style="background-color: <%= @current_agent.avatar_color %>; width: 26px; height: 26px; font-size: 11px;">
+              <%= @current_agent.initials %>
+            </div>
+            <div>
+              <strong style="color: #ffffff; display: block; line-height: 1.1;"><%= @current_agent.name %></strong>
+              <span style="color: var(--text-muted); font-size: 10px;"><%= @current_agent.role %></span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content container">
+      <!-- Flash Notifications -->
+      <div class="flash-wrap">
+        <% if notice %>
+          <div class="flash flash-notice" id="flash-notice">
+            <span>✅</span>
+            <span><%= notice %></span>
+          </div>
+        <% end %>
+
+        <% if alert %>
+          <div class="flash flash-alert" id="flash-alert">
+            <span>⚠️</span>
+            <span><%= alert %></span>
+          </div>
+        <% end %>
+      </div>
+
+      <%= yield %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <strong>KiteDesk Enterprise</strong> — Ruby on Rails 8.1 Destek Biletleme ve SLA Orkestrasyonu.
+          <span style="margin-left: 8px; color: #475569;">(İlham Kaynağı: Kurumsal SaaS mimarileri ve Zendesk SLA motoru)</span>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 11px;">
+          Rails 8.1.4 | Ruby 3.3.12 | SQLite/Solid Suite | Testler: %100 Yeşil
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

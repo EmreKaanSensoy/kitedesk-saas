@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+sarah:
+  name: Sarah Connor
+  email: sarah.connor@kitedesk.io
+  role: Tier 2 Support Lead
+  avatar_color: "#6366f1"
+  active: true
+
+alex:
+  name: Alex Mercer
+  email: alex.mercer@kitedesk.io
+  role: Enterprise Support Engineer
+  avatar_color: "#10b981"
+  active: true

@@ -1,0 +1,10 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+msg_one:
+  ticket: urgent_ticket
+  sender_type: customer
+  sender_name: Acme VP Engineering
+  sender_email: vp@acmecorp.com
+  body: We are seeing database timeouts on production.
+  is_internal_note: false
+  is_gratitude: false

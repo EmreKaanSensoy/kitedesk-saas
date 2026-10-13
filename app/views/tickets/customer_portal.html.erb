@@ -1,0 +1,116 @@
+<% content_for :title, "Müşteri Destek Portalı — KiteDesk" %>
+
+<div style="max-width: 960px; margin: 0 auto;">
+  <!-- Customer SLA Commitment Banner -->
+  <div style="background: linear-gradient(135deg, #1e1b4b 0%, #1e293b 100%); border: 1px solid #4338ca; border-radius: var(--radius-xl); padding: 28px 32px; margin-bottom: 28px; box-shadow: var(--shadow-lg);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <span class="badge" style="background: rgba(99, 102, 241, 0.25); color: #c7d2fe; border: 1px solid #6366f1; margin-bottom: 8px;">
+          Kurumsal Müşteri Hizmet Seviyesi Taahhüdü (SLA)
+        </span>
+        <h1 style="font-size: 24px; font-weight: 800; color: #ffffff; margin-top: 4px;">
+          Şeffaf ve Garantili Destek Portalı
+        </h1>
+        <p style="font-size: 13px; color: #cbd5e1; margin-top: 6px; max-width: 620px;">
+          Açtığınız tüm talepler, öncelik derecesine göre katı SLA süreleri ile takip edilir. Talebinizin durumunu ve garanti edilen yanıt sürelerini aşağıdan canlı izleyebilirsiniz.
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <%= link_to "＋ Yeni Destek Talebi Aç", new_ticket_path, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLA Tiers Matrix -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 28px;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 16px;">
+      <span class="badge-priority badge-urgent">Urgent (Acil)</span>
+      <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">İlk Yanıt: <strong>1 Saat</strong></div>
+      <div style="font-size: 12px; color: var(--text-muted);">Çözüm Hedefi: <strong>4 Saat</strong></div>
+    </div>
+
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 16px;">
+      <span class="badge-priority badge-high">High (Yüksek)</span>
+      <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">İlk Yanıt: <strong>4 Saat</strong></div>
+      <div style="font-size: 12px; color: var(--text-muted);">Çözüm Hedefi: <strong>12 Saat</strong></div>
+    </div>
+
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 16px;">
+      <span class="badge-priority badge-medium">Medium (Normal)</span>
+      <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">İlk Yanıt: <strong>12 Saat</strong></div>
+      <div style="font-size: 12px; color: var(--text-muted);">Çözüm Hedefi: <strong>48 Saat</strong></div>
+    </div>
+
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 16px;">
+      <span class="badge-priority badge-low">Low (Düşük)</span>
+      <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">İlk Yanıt: <strong>24 Saat</strong></div>
+      <div style="font-size: 12px; color: var(--text-muted);">Çözüm Hedefi: <strong>96 Saat</strong></div>
+    </div>
+  </div>
+
+  <!-- Customer's Active Tickets -->
+  <div class="table-card">
+    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 16px; font-weight: 700; color: #ffffff;">Kayıtlı Destek Talepleriniz</h3>
+      <span style="font-size: 12px; color: var(--text-muted);"><%= @tickets.count %> Toplam Talep</span>
+    </div>
+
+    <table class="ticket-table">
+      <thead>
+        <tr>
+          <th>Bilet No</th>
+          <th>Konu</th>
+          <th>Öncelik</th>
+          <th>Durum</th>
+          <th>Garantili Çözüm Süresi</th>
+          <th style="text-align: right;">Görüntüle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @tickets.each do |ticket| %>
+          <tr>
+            <td style="font-family: var(--font-mono); font-weight: 700; color: #94a3b8;">
+              <%= ticket.ticket_number %>
+            </td>
+
+            <td>
+              <%= link_to ticket.title, ticket_path(ticket), class: "ticket-title-link" %>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                Talep Sahibi: <%= ticket.requester_name %>
+              </div>
+            </td>
+
+            <td>
+              <span class="badge-priority badge-<%= ticket.priority %>">
+                <%= ticket.priority %>
+              </span>
+            </td>
+
+            <td>
+              <span class="badge badge-<%= ticket.status %>">
+                <%= ticket.status == "new_ticket" ? "NEW" : ticket.status.upcase %>
+              </span>
+            </td>
+
+            <td>
+              <% if ticket.status == "solved" || ticket.status == "closed" %>
+                <span style="color: #34d399; font-size: 12px; font-weight: 600;">✅ Çözümlendi</span>
+              <% elsif ticket.resolution_due_at %>
+                <span style="font-size: 12px; color: #38bdf8; font-family: var(--font-mono);">
+                  <%= ticket.resolution_due_at.strftime("%d.%m.%Y %H:%M") %>
+                </span>
+              <% else %>
+                <span style="color: var(--text-muted); font-size: 12px;">-</span>
+              <% end %>
+            </td>
+
+            <td style="text-align: right;">
+              <%= link_to "Mesajlaş →", ticket_path(ticket), class: "btn btn-secondary btn-sm" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

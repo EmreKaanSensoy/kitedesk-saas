@@ -1,0 +1,170 @@
+<% content_for :title, "5 Dakikalık Canlı Sunum & Kod Savunma Rehberi — KiteDesk" %>
+
+<div style="max-width: 980px; margin: 0 auto;">
+  <div style="margin-bottom: 20px;">
+    <%= link_to "&larr; Temsilci Masasına Dön".html_safe, tickets_path, style: "font-size: 13px; color: var(--text-secondary);" %>
+  </div>
+
+  <!-- Hero Header -->
+  <div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); border: 1px solid #6366f1; border-radius: var(--radius-xl); padding: 28px 32px; margin-bottom: 28px; box-shadow: var(--shadow-glow);">
+    <span class="badge" style="background: #4f46e5; color: #ffffff; margin-bottom: 8px;">
+      19 Ekim 2026 Canlı Sunum Pusulası
+    </span>
+    <h1 style="font-size: 26px; font-weight: 800; color: #ffffff; margin-top: 4px;">
+      5 Dakikalık Canlı Tahta Sunumu & Kod Yeri Savunması
+    </h1>
+    <p style="font-size: 13px; color: #c7d2fe; margin-top: 6px; line-height: 1.6;">
+      Bu sayfa, sınıfta tahtaya çıktığınızda 5 dakikalık sürenizi 100 puanlık tam başarıyla tamamlamanız için gereken tüm konuşma metinlerini, canlı demo adımlarını ve kod referanslarını içerir.
+    </p>
+  </div>
+
+  <!-- 1. Soru / Bölüm (30 Saniye) -->
+  <div class="defense-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <h2 style="font-size: 18px; font-weight: 700; color: #ffffff;">
+        1. Hangi SaaS, Hangi Aort Dilimi, Orijinaline Kim Neden Para Ödüyor? (30 sn)
+      </h2>
+      <span class="badge" style="background: var(--bg-subtle); color: #38bdf8; border: 1px solid var(--border-color);">00:00 - 00:30</span>
+    </div>
+
+    <div style="background: var(--bg-subtle); border-left: 4px solid var(--brand-primary); padding: 14px 18px; border-radius: 4px; font-size: 14px; color: #e2e8f0; line-height: 1.6; margin-bottom: 14px;">
+      <strong>Tahtada Söyleyeceğiniz Cümle:</strong><br>
+      "İlham aldığımız SaaS ürünü <strong>Zendesk Support Enterprise</strong>'dır. Çıkardığımız aort dilimi ise: <em>Destek biletleme yaşam döngüsü, katı durum geçişleri (state machine) ve dinamik SLA hedef motorudur</em>. Orijinal ürüne Fortune 500 firmalarından <strong>Uber (#141)</strong> haftalık milyonlarca sürücü talebinde 30 saniyenin altında ilk yanıt verip CSAT skorunu %95 üzerinde tutmak için; perakende devi <strong>Tesco (Global 500)</strong> ise 460.000 çalışanının haftalık 40.000 kurum içi IT biletini yönetmek için yüzbinlerce dolar lisans parası ödemektedir."
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px; color: var(--text-secondary);">
+      <div style="background: var(--bg-main); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <strong>Uber Kanıtı:</strong> <a href="https://www.zendesk.com/customer/uber/" target="_blank" style="color: #818cf8;">Zendesk Resmi Müşteri Vaka Analizi &rarr;</a>
+      </div>
+      <div style="background: var(--bg-main); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <strong>Tesco Kanıtı:</strong> <a href="https://www.zendesk.co.uk/customer/tesco/" target="_blank" style="color: #818cf8;">Zendesk Resmi Müşteri Vaka Analizi &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Soru / Bölüm (2 Dakika) -->
+  <div class="defense-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <h2 style="font-size: 18px; font-weight: 700; color: #ffffff;">
+        2. Canlı Uygulamada Aort Dilimi Baştan Sona (2 dk)
+      </h2>
+      <span class="badge" style="background: var(--bg-subtle); color: #38bdf8; border: 1px solid var(--border-color);">00:30 - 02:30</span>
+    </div>
+
+    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 14px;">
+      Canlı tarayıcı üzerinden sırasıyla şu 5 adımı tıklayarak hocaya gösterin:
+    </p>
+
+    <ol style="margin-left: 20px; font-size: 13px; color: #e2e8f0; line-height: 1.8;">
+      <li><strong>Yeni Bilet Aç:</strong> 'Yeni Bilet' butonuna basıp <code>Urgent</code> öncelikli bir bilet açın. SLA sayacının anında 1 saatlik İlk Yanıt ve 4 saatlik Çözüm hedefini başlattığını gösterin.</li>
+      <li><strong>Temsilci Atama & Open:</strong> Temsilci atayarak biletin <code>new_ticket -> open</code> durumuna geçtiğini gösterin.</li>
+      <li><strong>Temsilci Yanıtı & Dahili Not:</strong> Müşteriye genel yanıt verip ilk yanıt süresinin kaydedildiğini (<code>first_response_recorded</code>) ve sarı renkli gizli dahili not (internal note) eklendiğini gösterin.</li>
+      <li><strong>Solved Durumu:</strong> Sorunu çözüp 'SOLVED Yap' butonuna basın.</li>
+      <li><strong>48 Saatlik Kapanma Kuralının Canlı Kanıtı:</strong> Sağdaki Canlı Sunum konsolundan <em>'⏱️ +50 Saat: Çözüm Zamanını Geriye Çek'</em> butonuna basın, ardından <em>'✅ 48 Saatlik Otomatik Kapatmayı Çalıştır'</em> deyin. Bilet anında <code>closed</code> durumuna geçer!</li>
+    </ol>
+  </div>
+
+  <!-- 3. Soru / Bölüm (1 Dakika) -->
+  <div class="defense-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <h2 style="font-size: 18px; font-weight: 700; color: #ffffff;">
+        3. Zaman Kuralının ve Durum Geçişinin Kodu (1 dk)
+      </h2>
+      <span class="badge" style="background: var(--bg-subtle); color: #38bdf8; border: 1px solid var(--border-color);">02:30 - 03:30</span>
+    </div>
+
+    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 10px;">
+      Hoca kodları açmanızı istediğinde göstereceğiniz 2 kesin kod bloğu:
+    </p>
+
+    <!-- Code Block 1: Durum Geçişi -->
+    <div style="margin-bottom: 16px;">
+      <strong style="font-size: 13px; color: #a5b4fc;">A) Durum Geçiş Kuralı (State Machine): <code>app/models/ticket.rb</code></strong>
+      <div class="code-snippet">
+VALID_TRANSITIONS = {
+  "new_ticket" => %w[open solved closed],
+  "open"       => %w[pending solved closed],
+  "pending"    => %w[open solved closed],
+  "solved"     => %w[open closed],
+  "closed"     => %w[] # Kapatılan bilet kilitlenir, doğrudan açılamaz!
+}.freeze
+
+def transition_to!(new_status, actor_name: "System", reason: nil)
+  raise StandardError, "Geçersiz durum geçişi!" unless can_transition_to?(new_status)
+  # updates status, timestamps (resolved_at, closed_at), and creates audit event
+end
+      </div>
+    </div>
+
+    <!-- Code Block 2: Zaman Kuralı (travel_to testli) -->
+    <div>
+      <strong style="font-size: 13px; color: #a5b4fc;">B) Zaman Kuralı & 48 Saatlik Otomatik Kapatma: <code>app/models/ticket.rb</code> & <code>test/models/ticket_test.rb</code></strong>
+      <div class="code-snippet">
+# TIME RULE 1: 48 Saat Boyunca Çözülmüş Kalan Biletlerin Otomatik Kapatılması
+def self.auto_close_solved_tickets!(threshold = 48.hours.ago)
+  where(status: "solved").where("resolved_at <= ?", threshold).find_each do |ticket|
+    ticket.transition_to!("closed", reason: "48 saatlik hareketsizlik sonrası otomatik kapatıldı.")
+  end
+end
+
+# TEST (test/models/ticket_test.rb):
+test "travel_to ile çözülen bilet 48 saat sonra otomatik closed olur" do
+  travel_to @base_time do
+    ticket.transition_to!("solved")
+    travel 49.hours
+    Ticket.auto_close_solved_tickets!
+    assert_equal "closed", ticket.reload.status
+  end
+end
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Soru / Bölüm: 100 Puan Özelliği (1 Dakika) -->
+  <div class="defense-card" style="border-color: #ec4899; background: rgba(236, 72, 153, 0.05);">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <h2 style="font-size: 18px; font-weight: 700; color: #f472b6;">
+        4. 100 Puanlık Özellik: Kullanıcı Yorumundan Gelen Çözüm (1 dk)
+      </h2>
+      <span class="badge" style="background: #ec4899; color: #ffffff;">100 PUAN GARANTİSİ</span>
+    </div>
+
+    <div style="background: var(--bg-subtle); border-left: 4px solid #ec4899; padding: 14px 18px; border-radius: 4px; font-size: 14px; color: #e2e8f0; line-height: 1.6; margin-bottom: 14px;">
+      <strong>Tahtada Tek Cümleyle Söyleyeceğiniz Çözüm:</strong><br>
+      "<strong>Kimin Acısı:</strong> Zendesk kullanan destek ekipleri ve yöneticileri.<br>
+      <strong>Hangi Yorum:</strong> Capterra ve Zendesk Community incelemelerinde kullanıcılar; <em>'Çözülmüş bir bilete müşteri nezaketen teşekkür ettiğinde ya da otomatik tatil (Out of Office) e-postası döndüğünde, biletin anlamsızca tekrar OPEN durumuna düşüp kuyruğu kirletmesinden ve SLA metriklerini bozmasından'</em> yakınmaktadır.<br>
+      <strong>Bizim Çözümümüz:</strong> Klonumuzda geliştirdiğimiz <strong>'Akıllı Teşekkür & OOO Kalkanı' (GratitudeDetector)</strong> sayesinde teşekkür mesajları ve otomatik tatil yanıtları bileti yeniden açmaz, SLA sayacını sıfırlamaz; destek kuyruğunu tertemiz tutar!"
+    </div>
+
+    <div style="font-size: 12px; color: var(--text-secondary);">
+      İnceleme Kaynağı: <a href="https://www.capterra.com/p/16281/Zendesk-Support/" target="_blank" style="color: #f472b6;">Capterra Zendesk Support User Reviews & Community Discussions &rarr;</a>
+    </div>
+  </div>
+
+  <!-- 5. Soru: Kod Yeri Savunması (30 Saniye) -->
+  <div class="defense-card" style="border-color: #f59e0b; background: rgba(245, 158, 11, 0.05);">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <h2 style="font-size: 18px; font-weight: 700; color: #fbbf24;">
+        5. Kod Yeri Sorusu Savunması: "SLA Hafta Sonunu Saymasın" Değişikliği (30 sn)
+      </h2>
+      <span class="badge" style="background: #d97706; color: #ffffff;">HOCANIN KOD SORUSU</span>
+    </div>
+
+    <div style="background: var(--bg-subtle); border-left: 4px solid #f59e0b; padding: 14px 18px; border-radius: 4px; font-size: 14px; color: #e2e8f0; line-height: 1.6; margin-bottom: 14px;">
+      <strong>Hocanın Sorusu:</strong> "SLA süre kuralını 'Hafta sonunu saymasın' şeklinde değiştirmek isteseydik hangi dosya ve satıra dokunacaktın?"<br><br>
+      <strong>Kesin Cevabınız:</strong><br>
+      "Hocam, tam olarak <code>app/models/ticket.rb</code> dosyasındaki <strong><code>calculate_due_date(base_time, duration)</code></strong> metoduna (Satır 88-92) dokunuruz!<br>
+      Mevcut kodda <code>base_time + duration</code> hesaplaması yapılıyor. Hafta sonunu hariç tutmak için bu metoda iş günü (business days) döngüsü eklenir; hedef süreye ulaşana kadar Cumartesi ve Pazar günleri atlanarak süreye 48 saat ilave edilir."
+    </div>
+
+    <div class="code-snippet">
+# app/models/ticket.rb (Satır 88-92):
+def calculate_due_date(base_time, duration)
+  # Hafta sonunu saymama kuralı tam olarak bu metoda yazılır:
+  target = base_time + duration
+  # Örnek: while target.saturday? || target.sunday? do target += 1.day end
+  target
+end
+    </div>
+  </div>
+</div>
