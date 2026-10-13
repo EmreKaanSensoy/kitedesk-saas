@@ -15,6 +15,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libvips sqlite3
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -25,8 +28,8 @@ jobs:
         env:
           RAILS_ENV: test
         run: |
-          bin/rails db:test:prepare
-          bin/rails test
+          bundle exec rails db:test:prepare
+          bundle exec rails test
 
   scan_ruby:
     name: Security Scan (Bundler Audit)
@@ -44,4 +47,4 @@ jobs:
           bundler-cache: true
 
       - name: Scan for known vulnerabilities
-        run: bin/bundler-audit --update || true
+        run: bundle exec bundler-audit --update || true
