@@ -1,6 +1,6 @@
 # 🪁 KiteDesk Enterprise
 
-![CI Test Suite](https://github.com/USER_REPO_PLACEHOLDER/actions/workflows/ci.yml/badge.svg)
+![CI Test Suite](https://github.com/EmreKaanSensoy/kitedesk-saas/actions/workflows/ci.yml/badge.svg)
 ![Ruby Version](https://img.shields.io/badge/Ruby-3.3.12-CC342D?logo=ruby&logoColor=white)
 ![Rails Version](https://img.shields.io/badge/Rails-8.1.4-D30001?logo=rubyonrails&logoColor=white)
 ![Deployment](https://img.shields.io/badge/Deploy-Render-46E3B7?logo=render&logoColor=white)
@@ -14,7 +14,7 @@
 ## 🌐 Canlı Bağlantılar ve Demo Bilgileri
 
 * **Canlı Uygulama URL'si:** `CANLI_URL_BURAYA_GELECEK` *(Örnek Render Dağıtımı: `https://kitedesk-saas.onrender.com`)*
-* **GitHub Deposu:** `https://github.com/USER_REPO_PLACEHOLDER`
+* **GitHub Deposu:** `https://github.com/EmreKaanSensoy/kitedesk-saas`
 * **Hazır Test Kullanıcıları:**
   * **Destek Lideri:** Sarah Connor (`sarah.connor@kitedesk.io`) — *Principal Support Lead*
   * **Kıdemli Mühendis:** Alex Mercer (`alex.mercer@kitedesk.io`) — *Enterprise Support Engineer*
@@ -165,7 +165,7 @@ Testler GitHub Actions üzerinde ve lokalde **%100 yeşildir (0 failures, 0 erro
 
 ```bash
 # 1. Depoyu klonlayın
-git clone https://github.com/USER_REPO_PLACEHOLDER.git
+git clone https://github.com/EmreKaanSensoy/kitedesk-saas.git
 cd SaaS
 
 # 2. Bağımlılıkları yükleyin
